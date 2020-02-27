@@ -7,6 +7,7 @@ class DiscordCommandAdd extends DiscordCommand {
   }
 
   onRun(message, args) {
+	let config = this.subsystem.manager.getSubsystem("Config").config;
 	if(args.length < 2) {
 		message.channel.send("Usage is `" + config.discord_command_character + "add [name] [base price]`");
 		return;

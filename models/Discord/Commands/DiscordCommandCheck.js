@@ -7,6 +7,7 @@ class DiscordCommandApples extends DiscordCommand {
   }
 
   onRun(message, args) {
+	let config = this.subsystem.manager.getSubsystem("Config").config;
     if(args.length < 2) {
 		message.channel.send("Usage is `" + config.discord_command_character + "check [name] [upper-bound] <lower-bound (optional)> <amount(optional)> `");
 		return;
