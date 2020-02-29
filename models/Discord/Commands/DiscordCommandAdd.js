@@ -8,6 +8,7 @@ class DiscordCommandAdd extends DiscordCommand {
 
   onRun(message, args) {
 	let config = this.subsystem.manager.getSubsystem("Config").config;
+	args.shift();
 	if(args.length < 2) {
 		message.channel.send("Usage is `" + config.discord_command_character + "add [name] [base price]`");
 		return;
@@ -16,7 +17,8 @@ class DiscordCommandAdd extends DiscordCommand {
 	
 	dbSubsystem.pool.getConnection(async (err, connection) => {
 		if (err) {
-			message.reply("Error contacting database, try again later.");
+			message.reply("Error contacting database: " + err);
+			return
 		}
 		try {
 			function query(q, a = []) { // why did you pick an SQL library with no promise support reeeeeeeeee
@@ -29,8 +31,16 @@ class DiscordCommandAdd extends DiscordCommand {
 					});
 				});
 			}
-			query('UPDATE values SET value = ? WHERE name = ?', [args[1], args[0]]);
-			query('INSERT INTO values (name, value) VALUES (?, ?) WHERE NOT EXISTS (SELECT * FROM values WHERE name = ?)', [args[0], args[1], args[0]]);
+			
+			let results = await query('SELECT * FROM costs WHERE name = ?', [args[0].toLowerCase()]);
+			if(results.length < 1) {
+			  await query('INSERT INTO costs (name, value) VALUES (?, ?)', [args[0].toLowerCase(), args[1]]);
+			  message.channel.send("Price of " + args[0] + " set to " + args[1]);
+			} else {
+			  await query('UPDATE costs SET value = ? WHERE name = ?', [args[1], args[0].toLowerCase()]);
+			  message.channel.send("Price of " + args[0].toLowerCase() + " updated to " + args[1]);
+			}
+			
 		} catch (e) {
 			message.reply("An e-roar has occured: "+e);
 		} finally {
@@ -38,7 +48,6 @@ class DiscordCommandAdd extends DiscordCommand {
 		}
 	});
 
-    message.channel.send(response);
   }
 
 }
