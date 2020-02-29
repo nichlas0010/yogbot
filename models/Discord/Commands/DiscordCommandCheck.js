@@ -68,7 +68,7 @@ class DiscordCommandCheck extends DiscordCommand {
 				}
 				
 			}	
-			message.channel.send("Ideal price: " + idealprice + ", fee: " + fee);
+			message.channel.send("Ideal price: " + idealprice + ", fee: " + Math.round(fee));
 			
 		} catch (e) {
 			message.reply("An e-roar has occured: "+e);
