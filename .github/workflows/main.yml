@@ -21,4 +21,4 @@ jobs:
       env:
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
       with:
-        args: set image --namespace nichbot deployment/nichbot nichbot=docker.pkg.github.com/nichlas0010/yogbot/yogbot:${{github.sha}}
+        args: --insecure-skip-tls-verify set image --namespace nichbot deployment/nichbot nichbot=docker.pkg.github.com/nichlas0010/yogbot/yogbot:${{github.sha}}
